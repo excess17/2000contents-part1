@@ -26,9 +26,10 @@ jobs:
           repository: excess17/2000contents-part1
           token: ${{ steps.app-token.outputs.token }}
           path: target
+          # Keep credentials available for Git operations (even so, we still set remote explicitly below)
           persist-credentials: true
 
-            - name: Create a Hello World commit on a new branch
+      - name: Create a Hello World commit on a new branch
         env:
           GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
@@ -55,6 +56,6 @@ jobs:
           git add hello-from-github-app.txt
           git commit -m "Hello World: commit via GitHub App token"
 
-          # Force git to use the token for pushing
+          # Ensure pushes authenticate using the short-lived GitHub App token
           git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/excess17/2000contents-part1.git"
           git push origin "$BRANCH"
