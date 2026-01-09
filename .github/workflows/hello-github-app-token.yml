@@ -28,9 +28,15 @@ jobs:
           path: target
           persist-credentials: true
 
-      - name: Create a Hello World commit on a new branch
+            - name: Create a Hello World commit on a new branch
+        env:
+          GH_APP_TOKEN: ${{ steps.app-token.outputs.token }}
         run: |
           set -euo pipefail
+
+          # Mask token so it won't appear in logs
+          echo "::add-mask::${GH_APP_TOKEN}"
+
           BRANCH="hello/app-token-${{ github.run_id }}"
 
           cd target
@@ -48,4 +54,7 @@ jobs:
 
           git add hello-from-github-app.txt
           git commit -m "Hello World: commit via GitHub App token"
+
+          # Force git to use the token for pushing
+          git remote set-url origin "https://x-access-token:${GH_APP_TOKEN}@github.com/excess17/2000contents-part1.git"
           git push origin "$BRANCH"
